@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  # Postgresql Service
+  db:
+    image: postgres_springapi_img
+    container_name: postgres_springapi_cont
+    restart: always
+    build: ./src/main/resources/persistence/
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - springapi_network
+
+
+  # Spring Boot Service
+  springboot:
+    image: springboot_springapi_img
+    container_name: springboot_springapi_cont
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - springapi_network
+    depends_on:
+      - db
+    ports:
+      - '8080:8080'
+
+volumes:
+  postgres_data:
+
+networks:
+  springapi_network:
+    driver: bridge
+
+
+
+
+    #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    #  app:
+    #    container_name: springboot-cont
+    #    image: springboot-img
+    #    build:
+    #      context: .
+    #      dockerfile: Dockerfile
+    #    ports:
+    #      - '8080:8080'
+    #    environment:
+    #      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/abdemoapidb
+    #      - SPRING_DATASOURCE_USERNAME=admin
+    #      - POSTGRES_PASSWORD=admin
+    #      - POSTGRES_USER=postgres
+    #      - POSTGRES_DB=cruddb
+#    depends_on:
+#      - postgresql
+
+#  postgresql:
+#    image: postgres
+#    container_name: postgres_cont
+#    restart: always
+#    ports:
+#      - '5432:5432'
+#    environment:
+#      - POSTGRES_PASSWORD=1234
+#      - POSTGRES_USER=expensetracker
+#      - POSTGRES_DB=expensetrackerdb
+
+
+
